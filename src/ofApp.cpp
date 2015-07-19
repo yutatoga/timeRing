@@ -22,10 +22,6 @@ void ofApp::setup(){
     
     // test image
     image.loadImage("img.jpg");
-
-    // ringImage
-    ringImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
-    ringImage.clear();
 }
 
 //--------------------------------------------------------------
@@ -35,6 +31,17 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){    
+    // test drawing
+    for (int i=0; i<ringImages.size(); i++) {
+        ringImages[i].draw(10+10*i, 10+10*i, ofGetWidth(), ofGetHeight());
+    }
+    
+    // Info
+    ofDrawBitmapString("press any keys to add ringImage", ofPoint(5, 15));
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
     // mask by fbo
     ofFbo fboMask;
     
@@ -59,18 +66,16 @@ void ofApp::draw(){
     // save to ofImage
     ofPixels p;
     fboRingImageCanvas.readToPixels(p);
+    
+    // ringImage
+    ofImage ringImage;
+    ringImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
+    ringImage.clear();
     ringImage.setFromPixels(p);
     fboRingImageCanvas.end();
-  
-    // test drawing
-    ringImage.draw(10, 10, ofGetWidth(), ofGetHeight());
-    ringImage.draw(30, 30, ofGetWidth(), ofGetHeight());
-    ringImage.draw(50, 50, ofGetWidth(), ofGetHeight());
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+    
+    // save ringImage to vector
+    ringImages.push_back(ringImage);
 }
 
 //--------------------------------------------------------------
