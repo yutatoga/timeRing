@@ -49,9 +49,11 @@ void ofApp::keyPressed(int key){
     fboMask.allocate(ofGetWidth(), ofGetHeight());
     fboMask.begin();
     ofClear(0, 0, 0, 0);
-    ofSetColor(ofColor::white);
-    ofRect(10, 10, 30, 100);
+    ofSetColor(ofColor::red);// using R channel to mask
     ofCircle(100, 100, 30);
+    ofSetColor(0, 255, 255, 255);// using R channel to mask
+    ofCircle(100, 100, 25);
+    ofSetColor(ofColor::white);
     fboMask.end();
     
     // time ring image
