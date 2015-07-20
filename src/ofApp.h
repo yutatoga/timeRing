@@ -21,6 +21,6 @@ class ofApp : public ofBaseApp{
 
     ofVideoGrabber videoGrabber;
     ofShader shader;
-    ofImage image;    
+    ofImage image, videoGrabberImage;
     vector<ofImage> ringImages;
 };

@@ -22,6 +22,10 @@ void ofApp::setup(){
     
     // test image
     image.loadImage("img.jpg");
+    
+    // save videoGrabber frame
+    videoGrabberImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+    videoGrabberImage.clear();
 }
 
 //--------------------------------------------------------------
@@ -36,6 +40,9 @@ void ofApp::draw(){
         ringImages[i].draw(10+10*i, 10+10*i, ofGetWidth(), ofGetHeight());
     }
     
+    // Debug
+    videoGrabber.draw(ofGetWidth(), 0, -240, 180);
+    
     // Info
     ofDrawBitmapString("press any keys to add ringImage", ofPoint(5, 15));
 }
@@ -45,14 +52,15 @@ void ofApp::keyPressed(int key){
     // mask by fbo
     ofFbo fboMask;
     
-    // fbo
+    // fbo to mask
     fboMask.allocate(ofGetWidth(), ofGetHeight());
     fboMask.begin();
     ofClear(0, 0, 0, 0);
     ofSetColor(ofColor::red);// using R channel to mask
-    ofCircle(100, 100, 30);
+    ofCircle(100, 100, 100);
+    ofRect(500, 500, 300, 300);
     ofSetColor(0, 255, 255, 255);// using R channel to mask
-    ofCircle(100, 100, 25);
+    ofCircle(100, 100, 50);
     ofSetColor(ofColor::white);
     fboMask.end();
     
@@ -63,7 +71,13 @@ void ofApp::keyPressed(int key){
     ofClear(0, 0, 0, 0);
     shader.begin();
     shader.setUniformTexture("imageMask", fboMask.getTextureReference(), 1);
-    image.draw(0, 0, ofGetWidth(), ofGetHeight());
+    
+    // draw image to be masked
+    // videoGrabber.draw(videoGrabber.width, 0, -videoGrabber.width, videoGrabber.height); // prob: changing matrix??
+    videoGrabberImage.setFromPixels(videoGrabber.getPixelsRef());
+    videoGrabberImage.mirror(false, true);
+    videoGrabberImage.draw(0, 0, ofGetWidth(), ofGetHeight());
+    
     shader.end();
     // save to ofImage
     ofPixels p;
@@ -78,6 +92,7 @@ void ofApp::keyPressed(int key){
     
     // save ringImage to vector
     ringImages.push_back(ringImage);
+    
 }
 
 //--------------------------------------------------------------
