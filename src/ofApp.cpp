@@ -50,60 +50,71 @@ void ofApp::draw(){
     if (showDebug) {
         videoGrabber.draw(ofGetWidth(), 0, -240, 180);
         // Info
-        ofDrawBitmapString("press any keys to add ringImage", ofPoint(5, 15));
+        ofDrawBitmapString("press space key to add ringImage", ofPoint(5, 15));
         ofDrawBitmapString("press mouse to change live/debug mode", ofPoint(5, 30));
+        ofDrawBitmapString("press 'c' to clear ringImages", ofPoint(5, 45));
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    // mask by fbo
-    ofFbo fboMask;
-    
-    // fbo to mask
-    fboMask.allocate(ofGetWidth(), ofGetHeight());
-    fboMask.begin();
-    ofClear(0, 0, 0, 0);
-    
-    // draw mask
-    ofSetColor(ofColor::red);// using R channel to mask
-    float ringWidth = 10.0f;
-    ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, (ringImages.size()+1)*ringWidth);
-    ofSetColor(0, 255, 255, 255);// using R channel to mask
-    ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, ringImages.size()*ringWidth);
-    
-    ofSetColor(ofColor::white);
-    fboMask.end();
-    
-    // time ring image
-    ofFbo fboRingImageCanvas;
-    fboRingImageCanvas.allocate(ofGetWidth(), ofGetHeight());
-    fboRingImageCanvas.begin();
-    ofClear(0, 0, 0, 0);
-    shader.begin();
-    shader.setUniformTexture("imageMask", fboMask.getTextureReference(), 1);
-    
-    // draw image to be masked
-    // videoGrabber.draw(videoGrabber.width, 0, -videoGrabber.width, videoGrabber.height); // prob: changing matrix??
-    videoGrabberImage.setFromPixels(videoGrabber.getPixelsRef());
-    videoGrabberImage.mirror(false, true);
-    videoGrabberImage.draw(0, 0, ofGetWidth(), ofGetHeight());
-    
-    shader.end();
-    // save to ofImage
-    ofPixels p;
-    fboRingImageCanvas.readToPixels(p);
-    
-    // ringImage
-    ofImage ringImage;
-    ringImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
-    ringImage.clear();
-    ringImage.setFromPixels(p);
-    fboRingImageCanvas.end();
-    
-    // save ringImage to vector
-    ringImages.push_back(ringImage);
-    
+    switch (key) {
+        case ' ':{
+            // mask by fbo
+            ofFbo fboMask;
+            
+            // fbo to mask
+            fboMask.allocate(ofGetWidth(), ofGetHeight());
+            fboMask.begin();
+            ofClear(0, 0, 0, 0);
+            
+            // draw mask
+            ofSetColor(ofColor::red);// using R channel to mask
+            float ringWidth = 10.0f;
+            ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, (ringImages.size()+1)*ringWidth);
+            ofSetColor(0, 255, 255, 255);// using R channel to mask
+            ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, ringImages.size()*ringWidth);
+            
+            ofSetColor(ofColor::white);
+            fboMask.end();
+            
+            // time ring image
+            ofFbo fboRingImageCanvas;
+            fboRingImageCanvas.allocate(ofGetWidth(), ofGetHeight());
+            fboRingImageCanvas.begin();
+            ofClear(0, 0, 0, 0);
+            shader.begin();
+            shader.setUniformTexture("imageMask", fboMask.getTextureReference(), 1);
+            
+            // draw image to be masked
+            // videoGrabber.draw(videoGrabber.width, 0, -videoGrabber.width, videoGrabber.height); // prob: changing matrix??
+            videoGrabberImage.setFromPixels(videoGrabber.getPixelsRef());
+            videoGrabberImage.mirror(false, true);
+            videoGrabberImage.draw(0, 0, ofGetWidth(), ofGetHeight());
+            
+            shader.end();
+            // save to ofImage
+            ofPixels p;
+            fboRingImageCanvas.readToPixels(p);
+            
+            // ringImage
+            ofImage ringImage;
+            ringImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
+            ringImage.clear();
+            ringImage.setFromPixels(p);
+            fboRingImageCanvas.end();
+            
+            // save ringImage to vector
+            ringImages.push_back(ringImage);
+            
+            break;
+        }
+        case 'c':
+            ringImages.clear();
+            break;
+        default:
+            break;
+    }
 }
 
 //--------------------------------------------------------------
