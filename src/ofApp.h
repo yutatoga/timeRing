@@ -18,10 +18,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+    
+    void shootRingImage();
 
     ofVideoGrabber videoGrabber;
     ofShader shader;
     ofImage image, videoGrabberImage;
     vector<ofImage> ringImages;
     bool showDebug;
+    int lastShootingTime;
+    float waitingTime;
 };
