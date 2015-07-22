@@ -2,6 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetCircleResolution(64);
+    ofSetFullscreen(true);
     // video grabber
     videoGrabber.setDeviceID(0);
     videoGrabber.setDesiredFrameRate(60);
@@ -26,6 +28,10 @@ void ofApp::setup(){
     // save videoGrabber frame
     videoGrabberImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
     videoGrabberImage.clear();
+    
+    //debug
+    showDebug = true;
+    
 }
 
 //--------------------------------------------------------------
@@ -37,14 +43,16 @@ void ofApp::update(){
 void ofApp::draw(){    
     // test drawing
     for (int i=0; i<ringImages.size(); i++) {
-        ringImages[i].draw(10+10*i, 10+10*i, ofGetWidth(), ofGetHeight());
+        ringImages[i].draw(0, 0, ofGetWidth(), ofGetHeight());
     }
     
     // Debug
-    videoGrabber.draw(ofGetWidth(), 0, -240, 180);
-    
-    // Info
-    ofDrawBitmapString("press any keys to add ringImage", ofPoint(5, 15));
+    if (showDebug) {
+        videoGrabber.draw(ofGetWidth(), 0, -240, 180);
+        // Info
+        ofDrawBitmapString("press any keys to add ringImage", ofPoint(5, 15));
+        ofDrawBitmapString("press mouse to change live/debug mode", ofPoint(5, 30));
+    }
 }
 
 //--------------------------------------------------------------
@@ -56,11 +64,14 @@ void ofApp::keyPressed(int key){
     fboMask.allocate(ofGetWidth(), ofGetHeight());
     fboMask.begin();
     ofClear(0, 0, 0, 0);
+    
+    // draw mask
     ofSetColor(ofColor::red);// using R channel to mask
-    ofCircle(100, 100, 100);
-    ofRect(500, 500, 300, 300);
+    float ringWidth = 10.0f;
+    ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, (ringImages.size()+1)*ringWidth);
     ofSetColor(0, 255, 255, 255);// using R channel to mask
-    ofCircle(100, 100, 50);
+    ofCircle(fboMask.getWidth()/2.0, fboMask.getHeight()/2.0f, ringImages.size()*ringWidth);
+    
     ofSetColor(ofColor::white);
     fboMask.end();
     
@@ -112,7 +123,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    showDebug = !showDebug;
 }
 
 //--------------------------------------------------------------

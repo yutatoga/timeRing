@@ -23,4 +23,5 @@ class ofApp : public ofBaseApp{
     ofShader shader;
     ofImage image, videoGrabberImage;
     vector<ofImage> ringImages;
+    bool showDebug;
 };
