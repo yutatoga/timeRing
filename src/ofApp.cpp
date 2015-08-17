@@ -10,6 +10,7 @@ void ofApp::setup(){
     videoGrabber.setDesiredFrameRate(60);
     videoGrabber.initGrabber(ofGetWidth(), ofGetHeight());
     lastShootingTime = ofGetElapsedTimef();
+    shootingTimes = 100;
     waitingTime = 1.0;
     
     // shader
@@ -41,8 +42,12 @@ void ofApp::update(){
     videoGrabber.update();
     
     if (ofGetElapsedTimef()-lastShootingTime > waitingTime) {
-        shootRingImage();
-        lastShootingTime = ofGetElapsedTimef();
+        if(ringImages.size() < shootingTimes){
+            shootRingImage();
+        } else{
+            ringImages.clear();
+        }
+        lastShootingTime = ofGetElapsedTimef();        
     }
 }
 

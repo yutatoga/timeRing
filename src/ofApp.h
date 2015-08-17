@@ -27,5 +27,6 @@ class ofApp : public ofBaseApp{
     vector<ofImage> ringImages;
     bool showDebug;
     int lastShootingTime;
+    int shootingTimes;
     float waitingTime;
 };
